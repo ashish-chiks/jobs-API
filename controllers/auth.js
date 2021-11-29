@@ -18,7 +18,8 @@ const login = async (req, res) => {
   const user = await userModel.findOne({ email });
   if (!user) throw new UnauthenticatedError("no user with this email found");
 
-  //password check
+  const checkPassword = await user.comparePassword(password);
+  if (!checkPassword) throw new UnauthenticatedError("wrong password");
 
   const token = user.generateToken();
   res.status(StatusCodes.OK).json({ user: { username: user.name }, token });
